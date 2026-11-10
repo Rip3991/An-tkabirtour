@@ -765,6 +765,7 @@ export function ControlDock({
                   ['mozole', 'Mozole Önü'],
                   ['aslanli', 'Aslanlı Yol'],
                   ['plaza', 'Tören Meydanı'],
+                  ['bayrak', 'Bayrak'],
                   ['follow', 'Ziyaretçi Takip'],
                 ] as Array<[CameraPreset, string]>
               ).map(([key, label]) => (

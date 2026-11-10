@@ -60,6 +60,7 @@ export type CameraPreset =
   | 'mozole'
   | 'aslanli'
   | 'plaza'
+  | 'bayrak'
   | 'follow';
 
 export type TimeOfDay = 'morning' | 'golden' | 'night';

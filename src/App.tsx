@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnitkabirViewport } from './components/AnitkabirViewport';
 import { ControlDock } from './components/ControlDock';
 import { PWAInstallButton } from './components/PWAInstallButton';
+import { AtaturkQuoteBanner } from './components/AtaturkQuoteBanner';
 import type {
   CameraPreset,
   FeedEntry,
@@ -52,7 +53,7 @@ export default function App() {
 
     function connect() {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const ws = new WebSocket(`${protocol}//${window.location.host}`);
+      const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -221,6 +222,7 @@ export default function App() {
       </header>
 
       <PWAInstallButton />
+      <AtaturkQuoteBanner />
 
       {/* Collapsible Bottom Control Dock */}
       <ControlDock

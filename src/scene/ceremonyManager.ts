@@ -545,15 +545,20 @@ export class CeremonyManager {
         this.bearers.forEach((b) => {
           b.torso.rotation.x = 0;
         });
-        // Persist a copy of the wreath flanking the Ataturk Bust with donor's name
+        // Place the first wreath dead center right in front of the Ataturk Bust,
+        // then fan subsequent wreaths symmetrically in front of the bust
         const permanent = this.createCeremonialWreath(this.currentDonor);
         const offsetCount = this.placedWreaths.length;
-        const side = offsetCount % 2 === 0 ? -1 : 1;
-        const tier = Math.floor(offsetCount / 2);
-        const spreadX = side * (1.3 + (tier % 3) * 0.9);
-        const spreadZ = -25.1 + Math.floor(tier / 3) * 0.55;
+        let spreadX = 0;
+        let spreadZ = -24.65;
+        if (offsetCount > 0) {
+          const side = offsetCount % 2 === 1 ? -1 : 1;
+          const step = Math.ceil(offsetCount / 2);
+          spreadX = side * ((step % 4) * 0.95);
+          spreadZ = -24.65 + Math.floor(step / 4) * 0.65;
+        }
         permanent.group.position.set(spreadX, 3.8, spreadZ);
-        permanent.group.rotation.y = Math.PI;
+        permanent.group.rotation.y = 0;
         this.placedWreathsGroup.add(permanent.group);
         this.placedWreaths.push({
           group: permanent.group,

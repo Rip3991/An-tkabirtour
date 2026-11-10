@@ -28,6 +28,7 @@ const CAMERA_PRESETS: Record<
   mozole: { pos: [0, 12, 6], target: [0, 9, -34] },
   aslanli: { pos: [118, 8.5, 6], target: [42, 3, 6] },
   plaza: { pos: [-24, 14, 34], target: [4, 5, -14] },
+  bayrak: { pos: [14, 24.5, 42], target: [26.5, 25.6, 26] },
 };
 
 const TIME_CONFIGS: Record<
@@ -127,6 +128,7 @@ export function AnitkabirViewport({
   const onUserOrbitStartRef = useRef(onUserOrbitStart);
   const onAutoFollowTriggeredRef = useRef(onAutoFollowTriggered);
   const knownIdsRef = useRef<Set<string>>(new Set());
+  const followTimerRef = useRef<number>(0);
 
   const [labels, setLabels] = useState<ProjectedLabel[]>([]);
   const [contextLost, setContextLost] = useState(false);
@@ -134,6 +136,9 @@ export function AnitkabirViewport({
   useEffect(() => {
     presetRef.current = cameraPreset;
     presetActiveRef.current = true;
+    if (cameraPreset === 'follow') {
+      followTimerRef.current = 0;
+    }
   }, [cameraPreset]);
 
   useEffect(() => {
@@ -199,6 +204,7 @@ export function AnitkabirViewport({
     });
 
     if (newArrivalDetected && autoFollowRef.current) {
+      followTimerRef.current = 0;
       presetRef.current = 'follow';
       presetActiveRef.current = true;
       onAutoFollowTriggeredRef.current();
@@ -399,24 +405,54 @@ export function AnitkabirViewport({
 
       if (presetActiveRef.current) {
         if (activePreset === 'follow') {
-          const { yaw, found } = visitorMgr.getLatestVisitorTransform(_followTarget);
-          if (found) {
-            const backX = -Math.sin(yaw);
-            const backZ = -Math.cos(yaw);
-            const rightX = Math.cos(yaw);
-            const rightZ = -Math.sin(yaw);
-            _desiredLookAt.set(_followTarget.x, _followTarget.y + 1.35, _followTarget.z);
-            _desiredCamPos.set(
-              _followTarget.x + backX * 7.5 + rightX * 2.4,
-              _followTarget.y + 4.3,
-              _followTarget.z + backZ * 7.5 + rightZ * 2.4,
-            );
-            camera.position.x = THREE.MathUtils.damp(camera.position.x, _desiredCamPos.x, 3.2, delta);
-            camera.position.y = THREE.MathUtils.damp(camera.position.y, _desiredCamPos.y, 3.2, delta);
-            camera.position.z = THREE.MathUtils.damp(camera.position.z, _desiredCamPos.z, 3.2, delta);
-            controls.target.x = THREE.MathUtils.damp(controls.target.x, _desiredLookAt.x, 4.5, delta);
-            controls.target.y = THREE.MathUtils.damp(controls.target.y, _desiredLookAt.y, 4.5, delta);
-            controls.target.z = THREE.MathUtils.damp(controls.target.z, _desiredLookAt.z, 4.5, delta);
+          followTimerRef.current += delta;
+          const t = followTimerRef.current;
+
+          if (t < 6.5) {
+            // Phase 1: Close-up follow on newly arrived visitor
+            const { yaw, found } = visitorMgr.getLatestVisitorTransform(_followTarget);
+            if (found) {
+              const backX = -Math.sin(yaw);
+              const backZ = -Math.cos(yaw);
+              const rightX = Math.cos(yaw);
+              const rightZ = -Math.sin(yaw);
+              _desiredLookAt.set(_followTarget.x, _followTarget.y + 1.25, _followTarget.z);
+              _desiredCamPos.set(
+                _followTarget.x + backX * 5.2 + rightX * 1.8,
+                _followTarget.y + 2.8,
+                _followTarget.z + backZ * 5.2 + rightZ * 1.8,
+              );
+              camera.position.x = THREE.MathUtils.damp(camera.position.x, _desiredCamPos.x, 3.4, delta);
+              camera.position.y = THREE.MathUtils.damp(camera.position.y, _desiredCamPos.y, 3.4, delta);
+              camera.position.z = THREE.MathUtils.damp(camera.position.z, _desiredCamPos.z, 3.4, delta);
+              controls.target.x = THREE.MathUtils.damp(controls.target.x, _desiredLookAt.x, 4.8, delta);
+              controls.target.y = THREE.MathUtils.damp(controls.target.y, _desiredLookAt.y, 4.8, delta);
+              controls.target.z = THREE.MathUtils.damp(controls.target.z, _desiredLookAt.z, 4.8, delta);
+            }
+          } else if (t < 12.5) {
+            // Phase 2: Smoothly pan & zoom to the waving Turkish Flag
+            const flagCam = CAMERA_PRESETS.bayrak;
+            camera.position.x = THREE.MathUtils.damp(camera.position.x, flagCam.pos[0], 2.6, delta);
+            camera.position.y = THREE.MathUtils.damp(camera.position.y, flagCam.pos[1], 2.6, delta);
+            camera.position.z = THREE.MathUtils.damp(camera.position.z, flagCam.pos[2], 2.6, delta);
+            controls.target.x = THREE.MathUtils.damp(controls.target.x, flagCam.target[0], 3.2, delta);
+            controls.target.y = THREE.MathUtils.damp(controls.target.y, flagCam.target[1], 3.2, delta);
+            controls.target.z = THREE.MathUtils.damp(controls.target.z, flagCam.target[2], 3.2, delta);
+          } else {
+            // Phase 3: Return smoothly to grand Anitkabir overview
+            const ov = CAMERA_PRESETS.overview;
+            camera.position.x = THREE.MathUtils.damp(camera.position.x, ov.pos[0], 2.5, delta);
+            camera.position.y = THREE.MathUtils.damp(camera.position.y, ov.pos[1], 2.5, delta);
+            camera.position.z = THREE.MathUtils.damp(camera.position.z, ov.pos[2], 2.5, delta);
+            controls.target.x = THREE.MathUtils.damp(controls.target.x, ov.target[0], 3.0, delta);
+            controls.target.y = THREE.MathUtils.damp(controls.target.y, ov.target[1], 3.0, delta);
+            controls.target.z = THREE.MathUtils.damp(controls.target.z, ov.target[2], 3.0, delta);
+            if (
+              camera.position.distanceTo(_desiredCamPos.set(...ov.pos)) < 0.35 &&
+              controls.target.distanceTo(_desiredLookAt.set(...ov.target)) < 0.35
+            ) {
+              presetActiveRef.current = false;
+            }
           }
         } else {
           const p = CAMERA_PRESETS[activePreset];
