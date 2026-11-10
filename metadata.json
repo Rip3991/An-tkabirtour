@@ -1,0 +1,6 @@
+{
+  "name": "Anıtkabir 3D — Canlı Ziyaretçi Akışı",
+  "description": "3D Anıtkabir kompleksi ve TikTok Live etkileşimli gerçek zamanlı ziyaretçi yürüyüş deneyimi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

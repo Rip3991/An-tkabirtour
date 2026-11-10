@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0e1116" />
+  <rect x="36" y="36" width="440" height="440" rx="76" fill="none" stroke="#f59e0b" stroke-opacity="0.28" stroke-width="6" />
+  <!-- Mozole Roof & Frieze -->
+  <rect x="96" y="164" width="320" height="28" rx="4" fill="#fbbf24" />
+  <rect x="112" y="192" width="288" height="10" fill="#d97706" />
+  <!-- 6 Colonnade Pillars -->
+  <rect x="122" y="202" width="22" height="126" fill="#fde68a" />
+  <rect x="168" y="202" width="22" height="126" fill="#fde68a" />
+  <rect x="214" y="202" width="22" height="126" fill="#fde68a" />
+  <rect x="276" y="202" width="22" height="126" fill="#fde68a" />
+  <rect x="322" y="202" width="22" height="126" fill="#fde68a" />
+  <rect x="368" y="202" width="22" height="126" fill="#fde68a" />
+  <!-- Podium & Stairs -->
+  <rect x="88" y="328" width="336" height="22" rx="3" fill="#d97706" />
+  <rect x="136" y="350" width="240" height="14" rx="2" fill="#b45309" />
+  <rect x="156" y="364" width="200" height="14" rx="2" fill="#92400e" />
+  <!-- Crescent & Star Accent -->
+  <circle cx="256" cy="112" r="24" fill="#ef4444" />
+  <circle cx="264" cy="112" r="19" fill="#0e1116" />
+  <circle cx="278" cy="112" r="7" fill="#ef4444" />
+</svg>
